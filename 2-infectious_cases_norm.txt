@@ -1,0 +1,52 @@
+-- create TABLE
+
+CREATE TABLE infectious_cases_norm (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	Year YEAR,
+    Number_yaws INT, 
+    polio_cases INT, 
+    cases_guinea_worm INT, 
+    Number_rabies FLOAT, 
+    Number_malaria FLOAT, 
+    Number_hiv FLOAT, 
+    Number_tuberculosis FLOAT, 
+    Number_smallpox FLOAT, 
+    Number_cholera_cases FLOAT,
+    country_id INT,
+    FOREIGN KEY (country_id) REFERENCES countries(id)
+)
+
+-- crete FUNCTION for parse string values to number
+
+USE pandemic;
+DROP FUNCTION IF EXISTS StringToFloat;
+
+DELIMITER //
+CREATE FUNCTION StringToFloat(input_string VARCHAR(100))
+RETURNS FLOAT 
+DETERMINISTIC 
+NO SQL
+BEGIN
+	DECLARE result FLOAT;
+    SET result = CAST(input_string AS FLOAT);
+    RETURN result;
+END //
+DELIMITER ;
+
+-- insert date to normilized table
+
+INSERT INTO infectious_cases_norm (country_id, Year, Number_yaws, polio_cases, cases_guinea_worm, Number_rabies, 
+	Number_malaria, Number_hiv, Number_tuberculosis, Number_smallpox, Number_cholera_cases)
+SELECT countries.id AS country_id,    
+	infectious_cases.Year,
+	StringToFloat(infectious_cases.Number_yaws) AS Number_yaws, 
+    StringToFloat(infectious_cases.polio_cases) AS polio_cases, 
+    StringToFloat(infectious_cases.cases_guinea_worm) AS cases_guinea_worm, 
+    StringToFloat(infectious_cases.Number_rabies) AS Number_rabies, 
+    StringToFloat(infectious_cases.Number_malaria) AS Number_malaria, 
+    StringToFloat(infectious_cases.Number_hiv) AS Number_hiv, 
+    StringToFloat(infectious_cases.Number_tuberculosis) AS Number_tuberculosis, 
+    StringToFloat(infectious_cases.Number_smallpox) AS Number_smallpox, 
+    StringToFloat(infectious_cases.Number_cholera_cases) AS Number_cholera_cases
+FROM infectious_cases
+INNER JOIN countries ON infectious_cases.Entity = countries.country

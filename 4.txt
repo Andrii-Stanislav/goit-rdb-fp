@@ -1,0 +1,21 @@
+-- 1
+
+USE pandemic;
+
+SELECT MAKEDATE(Year, 1) as first_day_of_the_year
+FROM infectious_cases_norm
+
+-- 2
+
+USE pandemic;
+
+SELECT CURDATE(), Year
+FROM infectious_cases
+
+-- 3
+
+USE pandemic;
+
+SELECT  Year, TIMESTAMPDIFF(YEAR, MAKEDATE(Year, 1), NOW()) AS years_diff
+FROM infectious_cases
+

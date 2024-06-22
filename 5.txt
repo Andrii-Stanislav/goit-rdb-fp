@@ -1,0 +1,43 @@
+-- 1
+
+USE pandemic;
+
+DROP FUNCTION IF EXISTS YearsToNow;
+
+DELIMITER //
+CREATE FUNCTION YearsToNow(input_year YEAR)
+RETURNS INT 
+DETERMINISTIC 
+NO SQL
+BEGIN
+	DECLARE result INT;
+    SET result = TIMESTAMPDIFF(YEAR, MAKEDATE(input_year, 1), NOW());
+    RETURN result;
+END //
+DELIMITER ;
+
+SELECT Year, YearsToNow(Year) AS years_diff
+FROM infectious_cases
+
+-- 2
+
+USE pandemic;
+
+DROP FUNCTION IF EXISTS CalcIllnessesInMonthPeriod;
+
+DELIMITER //
+
+CREATE FUNCTION CalcIllnessesInMonthPeriod(illnesses_per_year FLOAT, months INT)
+RETURNS FLOAT
+DETERMINISTIC 
+NO SQL
+BEGIN
+    DECLARE result FLOAT;
+    SET result = illnesses_per_year / months;
+    RETURN result;
+END //
+
+DELIMITER ;
+
+SELECT id, CalcIllnessesInMonthPeriod(Number_malaria, 12) AS malaria_per_month
+FROM infectious_cases_norm
